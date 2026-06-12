@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>腦傷病人病歷紀錄 — 影片教學與互動練習</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --teal: #1A7A6E;
+  --teal-light: #E2F5F3;
+  --teal-mid: #5DBFB5;
+  --teal-dark: #0A4A42;
+  --teal-deep: #126058;
+  --red-light: #FCEAEA; --red-mid: #F0A0A0; --red-dark: #7A1F1F; --red: #B03030;
+  --amber-light: #FDF4E3; --amber-mid: #F0C070; --amber-dark: #5C3A08; --amber: #8A5A10;
+  --green-light: #E8F5EE; --green-mid: #80C99A; --green-dark: #1A4F2E; --green: #2A7A48;
+  --blue-light: #E3F0FA; --blue-mid: #6AAED6; --blue-dark: #0C3F6B; --blue: #1A6FAF;
+  --purple-light: #F0EEFA; --purple-mid: #B0A0E0; --purple-dark: #3A2878; --purple: #5A40A8;
+  --orange-light: #FDF0E8; --orange-mid: #F0A06A; --orange-dark: #7A3210; --orange: #C05010;
+  --gray-bg: #F4F5F7; --gray-border: #DFE1E6; --gray-text: #6B6F7A; --text: #1A1D26; --white: #FFFFFF;
+  --radius: 10px; --radius-sm: 6px;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; background: var(--gray-bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+.site-header { background: var(--teal-dark); padding: 16px 24px; position: sticky; top: 0; z-index: 100; }
+.header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 14px; }
+.header-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.header-text h1 { font-size: 17px; font-weight: 600; color: #fff; line-height: 1.3; }
+.header-text p { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+.main-nav { background: var(--white); border-bottom: 1px solid var(--gray-border); padding: 0 24px; overflow-x: auto; }
+.nav-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 0; white-space: nowrap; }
+.nav-btn { padding: 14px 16px; border: none; background: none; font-size: 13px; color: var(--gray-text); cursor: pointer; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; font-weight: 500; }
+.nav-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+.nav-btn:hover:not(.active) { color: var(--text); }
+.main-content { max-width: 900px; margin: 0 auto; padding: 24px 24px 60px; }
+.section-panel { display: none; }
+.section-panel.active { display: block; }
+.card { background: var(--white); border: 1px solid var(--gray-border); border-radius: var(--radius); padding: 20px 22px; margin-bottom: 16px; }
+.section-intro { font-size: 14px; color: var(--gray-text); margin-bottom: 20px; padding: 13px 17px; background: var(--teal-light); border-radius: var(--radius-sm); border-left: 3px solid var(--teal); line-height: 1.7; }
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; border-radius: var(--radius); overflow: hidden; background: #000; margin-bottom: 14px; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+.video-note { font-size: 13px; color: var(--gray-text); margin-bottom: 16px; padding: 12px 16px; background: var(--teal-light); border-radius: var(--radius-sm); border-left: 3px solid var(--teal); }
+.start-btn { width: 100%; padding: 14px; border-radius: var(--radius-sm); border: none; background: var(--teal); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: background .15s; }
+.start-btn:hover { background: var(--teal-dark); }
+.action-btns { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.action-btn { flex: 1; min-width: 130px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--gray-border); background: var(--white); font-size: 13px; color: var(--text); cursor: pointer; font-weight: 500; }
+.action-btn:hover { background: var(--gray-bg); }
+
+/* Quiz */
+.quiz-sub-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.qst-btn { padding: 7px 14px; border-radius: var(--radius-sm); border: 1px solid var(--gray-border); background: var(--white); font-size: 13px; color: var(--gray-text); cursor: pointer; font-weight: 500; transition: all .15s; }
+.qst-btn.active { background: var(--teal-light); color: var(--teal-dark); border-color: var(--teal-mid); }
+.progress-bar-bg { height: 4px; background: var(--gray-border); border-radius: 2px; margin-bottom: 18px; }
+.progress-bar-fill { height: 4px; background: var(--teal); border-radius: 2px; transition: width .4s ease; }
+.q-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.q-num { font-size: 13px; color: var(--gray-text); }
+.q-badge { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--teal-light); color: var(--teal-dark); font-weight: 500; }
+.q-text { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.q-scenario { background: var(--gray-bg); border-left: 3px solid var(--teal); padding: 12px 16px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 14px; color: #444; line-height: 1.7; margin-bottom: 18px; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+@media(max-width:480px){.options-grid{grid-template-columns:1fr;}}
+.opt-btn { background: var(--white); border: 1px solid var(--gray-border); border-radius: var(--radius-sm); padding: 13px 15px; text-align: left; cursor: pointer; transition: border-color .15s, background .15s; }
+.opt-btn:hover:not(:disabled) { background: var(--gray-bg); border-color: #B0B4C0; }
+.opt-btn .ol { font-size: 14px; font-weight: 600; color: var(--text); }
+.opt-btn.correct { border: 1.5px solid var(--green-mid); background: var(--green-light); }
+.opt-btn.correct .ol { color: var(--green-dark); }
+.opt-btn.wrong { border: 1.5px solid var(--red-mid); background: var(--red-light); }
+.opt-btn.wrong .ol { color: var(--red-dark); }
+.opt-btn.reveal { border: 1.5px solid var(--green-mid); background: var(--green-light); }
+.opt-btn.reveal .ol { color: var(--green-dark); }
+.opt-btn:disabled { cursor: default; }
+.feedback { border-radius: var(--radius-sm); padding: 13px 16px; margin-bottom: 14px; font-size: 14px; line-height: 1.65; display: none; }
+.feedback.correct { background: var(--green-light); color: var(--green-dark); border: 1px solid var(--green-mid); }
+.feedback.wrong { background: var(--red-light); color: var(--red-dark); border: 1px solid var(--red-mid); }
+.feedback .fb-title { font-weight: 600; margin-bottom: 4px; }
+.quiz-next-btn { width: 100%; padding: 13px; border-radius: var(--radius-sm); border: 1px solid var(--gray-border); background: var(--white); font-size: 15px; color: var(--text); cursor: pointer; font-weight: 500; display: none; }
+.quiz-next-btn:hover { background: var(--gray-bg); }
+.score-screen { display: none; text-align: center; padding: 2rem 0; }
+.score-big { font-size: 56px; font-weight: 700; color: var(--teal); line-height: 1; margin-bottom: 8px; }
+.score-label { font-size: 15px; color: var(--gray-text); margin-bottom: 1.5rem; }
+.score-breakdown { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; max-width: 340px; margin: 0 auto 1.5rem; }
+.sc-card { background: var(--gray-bg); border-radius: var(--radius-sm); padding: 14px 10px; }
+.sc-num { font-size: 24px; font-weight: 700; color: var(--text); }
+.sc-lbl { font-size: 12px; color: var(--gray-text); margin-top: 2px; }
+.restart-btn { padding: 12px 28px; border-radius: var(--radius-sm); border: 1px solid var(--gray-border); background: var(--white); font-size: 15px; color: var(--text); cursor: pointer; font-weight: 500; }
+
+/* Reference tabs */
+.ref-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.ref-tab { padding: 7px 14px; border-radius: var(--radius-sm); border: 1px solid var(--gray-border); background: var(--white); font-size: 13px; color: var(--gray-text); cursor: pointer; font-weight: 500; transition: all .15s; }
+.ref-tab.active { background: var(--teal-light); color: var(--teal-dark); border-color: var(--teal-mid); }
+.ref-panel { display: none; }
+.ref-panel.active { display: block; }
+.ref-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+.ref-table th { text-align: left; padding: 9px 12px; background: var(--gray-bg); color: var(--gray-text); font-weight: 600; border-bottom: 1px solid var(--gray-border); font-size: 12px; }
+.ref-table td { padding: 9px 12px; border-bottom: 1px solid var(--gray-border); color: var(--text); vertical-align: top; line-height: 1.5; }
+.ref-table tr:last-child td { border-bottom: none; }
+.ref-h2 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--gray-border); }
+.score-pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.pill-g { background: var(--green-light); color: var(--green-dark); }
+.pill-a { background: var(--amber-light); color: var(--amber-dark); }
+.pill-r { background: var(--red-light); color: var(--red-dark); }
+.pill-b { background: var(--blue-light); color: var(--blue-dark); }
+.pill-p { background: var(--purple-light); color: var(--purple-dark); }
+.pill-t { background: var(--teal-light); color: var(--teal-dark); }
+.warn-box { background: var(--amber-light); border: 1px solid var(--amber-mid); border-radius: var(--radius-sm); padding: 12px 16px; margin-top: 12px; font-size: 13px; color: var(--amber-dark); font-weight: 500; }
+
+.site-footer { text-align: center; padding: 24px; font-size: 12px; color: var(--gray-text); border-top: 1px solid var(--gray-border); margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-icon">🧠</div>
+    <div class="header-text">
+      <h1>腦傷病人病歷紀錄 — 影片教學與互動練習</h1>
+      <p>北醫復健醫學部職能治療 · 供 OT 學生與新進治療師使用</p>
+    </div>
+  </div>
+</header>
+
+<nav class="main-nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="switchMain('video',this)">影片教學</button>
+    <button class="nav-btn" onclick="switchMain('quiz',this)">互動練習</button>
+    <button class="nav-btn" onclick="switchMain('ref',this)">病歷項目速查</button>
+  </div>
+</nav>
+
+<main class="main-content">
+
+  <!-- VIDEO -->
+  <section class="section-panel active" id="panel-video">
+    <p class="video-note">📹 請先完整觀看影片，了解腦傷病人病歷紀錄的各項評估方式，再進行後續的互動練習。</p>
+    <div class="video-wrap">
+      <iframe src="https://www.youtube.com/embed/JRoHeDQgKDg" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+    </div>
+    <div class="card" style="text-align:center;padding:20px;">
+      <div style="font-size:15px;color:var(--gray-text);margin-bottom:14px;">影片看完了嗎？選擇接下來的練習：</div>
+      <button class="start-btn" onclick="switchMain('quiz',null)">開始互動練習 →</button>
+      <div class="action-btns">
+        <button class="action-btn" onclick="switchMain('ref',null)">📋 病歷項目速查</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="section-panel" id="panel-quiz">
+    <p class="section-intro">共四組練習，涵蓋 GCS 計分、Brunnstrom Stage 判斷、MAS 肌張力評分。答題後立即顯示詳細解說。</p>
+
+    <!-- 姓名輸入 -->
+    <div class="card" id="nameCard" style="text-align:center;padding:24px;">
+      <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px;">請先輸入您的姓名</div>
+      <div style="font-size:13px;color:var(--gray-text);margin-bottom:16px;">完成練習後，成績會自動送出給老師</div>
+      <input id="studentName" type="text" placeholder="請輸入您的姓名" style="width:100%;max-width:280px;padding:10px 14px;border:1px solid var(--gray-border);border-radius:var(--radius-sm);font-size:15px;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;">
+        <button onclick="startQuiz('all')" style="padding:11px 20px;border-radius:var(--radius-sm);border:none;background:var(--teal);color:#fff;font-size:14px;font-weight:600;cursor:pointer;">全部練習（12題）</button>
+        <button onclick="startQuiz('gcs')" style="padding:11px 20px;border-radius:var(--radius-sm);border:1px solid var(--gray-border);background:var(--white);font-size:14px;font-weight:500;cursor:pointer;">只練 GCS</button>
+        <button onclick="startQuiz('brunn')" style="padding:11px 20px;border-radius:var(--radius-sm);border:1px solid var(--gray-border);background:var(--white);font-size:14px;font-weight:500;cursor:pointer;">只練 Brunnstrom</button>
+        <button onclick="startQuiz('mas')" style="padding:11px 20px;border-radius:var(--radius-sm);border:1px solid var(--gray-border);background:var(--white);font-size:14px;font-weight:500;cursor:pointer;">只練 MAS</button>
+      </div>
+    </div>
+
+    <div class="card" id="quizCard" style="display:none;">
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="qProgress" style="width:0%"></div></div>
+      <div class="q-meta">
+        <span class="q-num" id="qNum">題目 1 / 12</span>
+        <span class="q-badge" id="qBadge"></span>
+      </div>
+      <div class="q-text" id="qText"></div>
+      <div class="q-scenario" id="qScenario"></div>
+      <div class="options-grid" id="qOptions"></div>
+      <div class="feedback" id="qFeedback"><div class="fb-title" id="qFbTitle"></div><div id="qFbBody"></div></div>
+      <button class="quiz-next-btn" id="qNextBtn">下一題</button>
+    </div>
+    <div class="score-screen" id="scoreScreen">
+      <div class="score-big" id="scoreBig"></div>
+      <div class="score-label" id="scoreLabel"></div>
+      <div style="font-size:14px;color:var(--gray-text);margin-bottom:12px;" id="scoreNameLabel"></div>
+      <div class="score-breakdown">
+        <div class="sc-card"><div class="sc-num" id="scCorrect"></div><div class="sc-lbl">答對</div></div>
+        <div class="sc-card"><div class="sc-num" id="scWrong"></div><div class="sc-lbl">答錯</div></div>
+        <div class="sc-card"><div class="sc-num" id="scTotal"></div><div class="sc-lbl">總題數</div></div>
+      </div>
+      <div id="submitStatus" style="font-size:13px;margin-bottom:12px;color:var(--green);"></div>
+      <button class="restart-btn" onclick="restartQuiz()">重新練習</button>
+    </div>
+  </section>
+
+  <!-- REFERENCE -->
+  <section class="section-panel" id="panel-ref">
+    <div class="card">
+      <div class="ref-tabs">
+        <button class="ref-tab active" onclick="switchRef('gcs',this)">GCS 意識量表</button>
+        <button class="ref-tab" onclick="switchRef('brunn-ue',this)">Brunnstrom 上肢</button>
+        <button class="ref-tab" onclick="switchRef('brunn-le',this)">Brunnstrom 下肢</button>
+        <button class="ref-tab" onclick="switchRef('mas',this)">MAS 肌張力</button>
+        <button class="ref-tab" onclick="switchRef('general',this)">其他評估項目</button>
+      </div>
+
+      <!-- GCS -->
+      <div class="ref-panel active" id="ref-gcs">
+        <div class="ref-h2">Glasgow Coma Scale（GCS）</div>
+        <table class="ref-table">
+          <thead><tr><th>向度</th><th>反應</th><th>分數</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="4" style="font-weight:600;color:var(--teal);">睜開眼睛<br>E（1–4）</td><td>自發性張開眼睛</td><td><span class="score-pill pill-g">4</span></td></tr>
+            <tr><td>聽到聲音刺激張開眼睛</td><td><span class="score-pill pill-a">3</span></td></tr>
+            <tr><td>對疼痛刺激才張開眼睛</td><td><span class="score-pill pill-a">2</span></td></tr>
+            <tr><td>無張眼反應</td><td><span class="score-pill pill-r">1</span></td></tr>
+            <tr><td rowspan="5" style="font-weight:600;color:var(--blue);">發聲反應<br>V（1–5）</td><td>有條理的談話</td><td><span class="score-pill pill-g">5</span></td></tr>
+            <tr><td>談話語無倫次，答非所問</td><td><span class="score-pill pill-a">4</span></td></tr>
+            <tr><td>只能說一些不適當的單字、詞</td><td><span class="score-pill pill-a">3</span></td></tr>
+            <tr><td>只能發出無法分辨的聲音</td><td><span class="score-pill pill-a">2</span></td></tr>
+            <tr><td>無發聲反應</td><td><span class="score-pill pill-r">1</span></td></tr>
+            <tr><td rowspan="6" style="font-weight:600;color:var(--purple);">最佳運動反應<br>M（1–6）</td><td>聽從命令</td><td><span class="score-pill pill-g">6</span></td></tr>
+            <tr><td>對疼痛刺激處會「用手撥除」</td><td><span class="score-pill pill-g">5</span></td></tr>
+            <tr><td>對疼痛有「上下肢收縮性運動」</td><td><span class="score-pill pill-a">4</span></td></tr>
+            <tr><td>對疼痛反射性上肢屈曲、下肢伸展</td><td><span class="score-pill pill-a">3</span></td></tr>
+            <tr><td>對疼痛反射性上下肢皆為伸展</td><td><span class="score-pill pill-r">2</span></td></tr>
+            <tr><td>對疼痛全無反應</td><td><span class="score-pill pill-r">1</span></td></tr>
+          </tbody>
+        </table>
+        <div class="warn-box">🗝️ 總分 = E + V + M｜最低 3 分，最高 15 分｜≤8 分通常需要插管，加護病房需能辨識 GCS</div>
+      </div>
+
+      <!-- Brunnstrom UE -->
+      <div class="ref-panel" id="ref-brunn-ue">
+        <div class="ref-h2">Brunnstrom Stage — 上肢（近端 Proximal U/E）</div>
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>動作表現</th></tr></thead>
+          <tbody>
+            <tr><td><span class="score-pill pill-r">Stage 1</span></td><td>無自主動作，很少或無阻力（張力）</td></tr>
+            <tr><td><span class="score-pill pill-r">Stage 2</span></td><td>在誘發下有協同動作或肌肉張力高於正常（如打哈欠、打噴嚏）</td></tr>
+            <tr><td><span class="score-pill pill-a">Stage 3</span></td><td>用手摸嘴及用手摸對側膝蓋時，出現典型協同動作</td></tr>
+            <tr><td><span class="score-pill pill-a">Stage 4</span></td><td>可做出：手摸屁股、手臂伸直向前平舉至 90°、肘彎曲 90° 前臂旋前&旋後</td></tr>
+            <tr><td><span class="score-pill pill-b">Stage 5</span></td><td>可做出：手臂側向平舉至 90°、手臂伸直向前抬高超過頭、手肘伸直前臂旋前&旋後</td></tr>
+            <tr><td><span class="score-pill pill-g">Stage 6</span></td><td>動作協調近似正常，但有些笨拙或快速動作時出現微小痙攣</td></tr>
+          </tbody>
+        </table>
+        <div class="ref-h2" style="margin-top:20px;">Brunnstrom Stage — 上肢（遠端 Distal U/E）</div>
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>動作表現</th></tr></thead>
+          <tbody>
+            <tr><td><span class="score-pill pill-r">Stage 1</span></td><td>癱軟無自主動作及手功能</td></tr>
+            <tr><td><span class="score-pill pill-r">Stage 2</span></td><td>開始發展抓握動作，少或沒有手指屈曲</td></tr>
+            <tr><td><span class="score-pill pill-a">Stage 3</span></td><td>可全抓握或鉤狀抓握，無自主手指伸直或放鬆</td></tr>
+            <tr><td><span class="score-pill pill-a">Stage 4</span></td><td>可全抓握且手指小範圍伸直，指側捏取（lateral pinch），和拇指鬆開</td></tr>
+            <tr><td><span class="score-pill pill-b">Stage 5</span></td><td>可指腹捏取，圓柱狀及球狀抓握，且手指可自主整體伸直到各種角度</td></tr>
+            <tr><td><span class="score-pill pill-g">Stage 6</span></td><td>可手指輪流對掌，及用手指數數（執行個別手指動作）</td></tr>
+          </tbody>
+        </table>
+        <div class="warn-box">⚠️ Hand Function 評估：施測於患側邊，Brunnstrom Stage 4 以下為 Unable，Stage 5 以上才進行 MMT</div>
+      </div>
+
+      <!-- Brunnstrom LE -->
+      <div class="ref-panel" id="ref-brunn-le">
+        <div class="ref-h2">Brunnstrom Stage — 下肢（L/E）</div>
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>動作表現</th></tr></thead>
+          <tbody>
+            <tr><td><span class="score-pill pill-r">Stage 1</span></td><td>下肢癱軟無自主動作</td></tr>
+            <tr><td><span class="score-pill pill-r">Stage 2</span></td><td>痙攣開始發展，有微小自主動作</td></tr>
+            <tr><td><span class="score-pill pill-a">Stage 3</span></td><td>痙攣增加，出現典型協同動作，坐或站姿可執行髖-膝-踝屈曲動作</td></tr>
+            <tr><td><span class="score-pill pill-a">Stage 4</span></td><td>坐姿膝屈曲超過 90°（腳向椅子下滑動），坐姿踝背屈（腳跟需著地且膝屈曲 90°）</td></tr>
+            <tr><td><span class="score-pill pill-b">Stage 5</span></td><td>站姿膝蓋後彎超過 90°（髖需接近伸直），站姿踝背屈（膝伸直腳跟向前跨一小步）</td></tr>
+            <tr><td><span class="score-pill pill-g">Stage 6</span></td><td>站姿髖外展超過抬高骨盆的角度，坐姿可執行膝內-外旋轉，結合踝內-外翻的動作</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MAS -->
+      <div class="ref-panel" id="ref-mas">
+        <div class="ref-h2">Modified Ashworth Scale（MAS）— 肌張力評估</div>
+        <table class="ref-table">
+          <thead><tr><th>分數</th><th>定義</th></tr></thead>
+          <tbody>
+            <tr><td><span class="score-pill pill-g">0</span></td><td>肌肉張力沒有上升，flaccid 或肌肉張力正常</td></tr>
+            <tr><td><span class="score-pill pill-t">1</span></td><td>肌肉張力稍微增加，當被動移動時，在最後只有一點阻力</td></tr>
+            <tr><td><span class="score-pill pill-a">1+</span></td><td>肌肉張力稍微增加，當被動移動時，阻力發生在做到前 1/2 內</td></tr>
+            <tr><td><span class="score-pill pill-a">2</span></td><td>肌肉張力增加更多，整個 ROM 過程中都可感覺有阻力，仍很容易移動</td></tr>
+            <tr><td><span class="score-pill pill-r">3</span></td><td>肌肉張力增加相當大，阻力都非常強，不容易移動</td></tr>
+            <tr><td><span class="score-pill pill-r">4</span></td><td>患部肢體呈現伸直或屈曲的僵直狀態</td></tr>
+          </tbody>
+        </table>
+        <div class="warn-box">🗝️ 施測要點：個案在放鬆狀態下受測；施測者在一秒鐘內完成牽拉，quick stretch 要做到 full range；評估前先確認關節活動度是否受限</div>
+      </div>
+
+      <!-- General -->
+      <div class="ref-panel" id="ref-general">
+        <div class="ref-h2">其他評估項目速查</div>
+        <table class="ref-table">
+          <thead><tr><th>項目</th><th>內容說明</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;">Motivation</td><td>Poor：完全不想做；Fair：經鼓勵可維持一段時間；Good：主動配合</td></tr>
+            <tr><td style="font-weight:600;">Endurance</td><td>Poor：15 分鐘以下或做 1 個活動就休息；Fair：15–45 分鐘；Good：45 分鐘以上</td></tr>
+            <tr><td style="font-weight:600;">Emotion</td><td>觀察順序：Denial → Anxiety → Anger → Depression → Adaption</td></tr>
+            <tr><td style="font-weight:600;">Speech</td><td>Expressive aphasia（表達性）/ Receptive aphasia（接收性）/ Global aphasia（全面性）</td></tr>
+            <tr><td style="font-weight:600;">Coordination</td><td>Finger to nose test：30 秒內盡快來回；觀察 Tremor、Dysdiadochokinesia、Dysmetria</td></tr>
+            <tr><td style="font-weight:600;">MMT</td><td>0–5 分；腦傷患肢 Brunnstrom Stage 5 以上才施測；0 = 無收縮；5 = 正常</td></tr>
+            <tr><td style="font-weight:600;">ROM</td><td>上肢：Shoulder flex 0–180°、Elbow flex 0–150°、Wrist flex 0–80°；下肢：Hip flex 0–125°、Knee flex 0–140°、Ankle DF 0–20°</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">北醫復健醫學部職能治療 · 本工具僅供學習使用</footer>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyZP3GEJlguc4e4kDIPEaM6RPuBV9VGbwFiHjxrI--8_ITh7HwIV2BizBbVnPNrglPGng/exec';
+let studentName = '';
+
+function switchMain(id, btn) {
+  document.querySelectorAll('.section-panel').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else { const map={video:0,quiz:1,ref:2}; document.querySelectorAll('.nav-btn')[map[id]]?.classList.add('active'); }
+}
+
+function switchRef(id, btn) {
+  document.querySelectorAll('.ref-panel').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.ref-tab').forEach(e => e.classList.remove('active'));
+  document.getElementById('ref-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── QUESTIONS ──
+const allQuestions = {
+  gcs: [
+    { cat:'GCS 計分', text:'計算 GCS 總分', scenario:'護理師記錄：病人對疼痛刺激才張開眼睛，對疼痛有上下肢收縮性運動，只能說一些不適當的單字。請問 GCS 總分是多少？', opts:['E2V3M4 = 9 分','E2V3M5 = 10 分','E2V2M4 = 8 分','E3V3M4 = 10 分'], ans:0, fc:'答對！E（疼痛才睜眼）= 2，V（不適當單字）= 3，M（收縮性運動）= 4，總分 E2+V3+M4 = 9 分。', fw:'答案是 E2V3M4 = 9 分。E：疼痛才睜眼 = 2；V：不適當單字 = 3；M：上下肢收縮性運動 = 4；總分 = 9。' },
+    { cat:'GCS 計分', text:'計算 GCS 總分', scenario:'病人自發性張開眼睛，有條理地回答問題，並聽從命令完成動作（如握手）。請問 GCS 總分是多少？', opts:['E4V5M6 = 15 分','E4V5M5 = 14 分','E3V5M6 = 14 分','E4V4M6 = 14 分'], ans:0, fc:'答對！自發張眼 E4，有條理談話 V5，聽從命令 M6，滿分 15 分，表示意識清楚。', fw:'答案是 E4V5M6 = 15 分。自發張眼 = E4，有條理談話 = V5，聽從命令 = M6，滿分 15。' },
+    { cat:'GCS 計分', text:'計算 GCS 總分', scenario:'加護病房病人：對疼痛刺激才張開眼睛，給疼痛刺激時上下肢皆為伸展性運動，無任何發聲反應。請問 GCS 總分及意識程度？', opts:['GCS 4 分，深度昏迷','GCS 5 分，意識不清','GCS 6 分，半昏迷','GCS 7 分，嗜睡'], ans:0, fc:'答對！E2 + V1 + M2 = 5 分。等等，重新計算：E（疼痛才睜眼）= 2，V（無發聲）= 1，M（上下肢皆伸展）= 2，總分 = 5 分，屬嚴重意識障礙，需注意插管需求（≤8 分）。', fw:'答案是 GCS 5 分（E2+V1+M2）。疼痛才睜眼 = E2，無發聲 = V1，上下肢皆伸展 = M2，總分 5，≤8 分通常需插管處理。' },
+  ],
+  brunn: [
+    { cat:'Brunnstrom 上肢近端', text:'判斷 Brunnstrom Stage（上肢近端）', scenario:'病患患側上肢在治療師誘發下（如讓病患打哈欠），有出現協同動作，且肌肉張力高於正常。靜止時無自主動作。', opts:['Stage 1','Stage 2','Stage 3','Stage 4'], ans:1, fc:'答對！在誘發下才出現協同動作或張力高於正常，是 Stage 2 的特徵。', fw:'答案是 Stage 2。在誘發下（打哈欠、打噴嚏等）才出現協同動作，靜止時無自主動作，評為 Stage 2。' },
+    { cat:'Brunnstrom 上肢近端', text:'判斷 Brunnstrom Stage（上肢近端）', scenario:'病患患側上肢能自主做出「手摸屁股」的動作，也能將手臂伸直向前平舉至 90 度，但無法做到手臂側向平舉至 90 度。', opts:['Stage 3','Stage 4','Stage 5','Stage 6'], ans:1, fc:'答對！能做手摸屁股、手臂伸直向前平舉至 90°，但無法完成 Stage 5 的動作（側向平舉），評為 Stage 4。', fw:'答案是 Stage 4。Stage 4 的動作包括：手摸屁股、手臂向前平舉 90°、肘彎曲 90° 旋前旋後。側向平舉是 Stage 5 才有的動作。' },
+    { cat:'Brunnstrom 上肢遠端', text:'判斷 Brunnstrom Stage（上肢遠端）', scenario:'病患患側手能做全抓握，也能做鉤狀抓握，但完全無法自主伸直手指或放鬆抓握。', opts:['Stage 2','Stage 3','Stage 4','Stage 5'], ans:1, fc:'答對！可全抓握或鉤狀抓握，但無自主手指伸直或放鬆，是 Stage 3 的特徵。', fw:'答案是 Stage 3。Stage 3：可全抓握或鉤狀抓握，無自主手指伸直或放鬆。Stage 4 才能做小範圍手指伸直和指側捏取。' },
+    { cat:'Brunnstrom 下肢', text:'判斷 Brunnstrom Stage（下肢）', scenario:'病患坐姿時能將膝蓋屈曲超過 90 度（腳向椅子下滑動），也能在坐姿下做踝背屈（腳跟著地膝屈曲 90°）。', opts:['Stage 3','Stage 4','Stage 5','Stage 6'], ans:1, fc:'答對！坐姿膝屈曲超過 90° 和坐姿踝背屈，是下肢 Stage 4 的特徵動作。', fw:'答案是 Stage 4。下肢 Stage 4：坐姿膝屈曲超過 90°（腳向椅子下滑），坐姿踝背屈（腳跟著地膝屈曲 90°）。' },
+    { cat:'Brunnstrom 下肢', text:'判斷 Brunnstrom Stage（下肢）', scenario:'病患站立時能做膝蓋後彎超過 90 度（髖關節接近伸直），也能在站姿下做踝背屈（膝蓋伸直腳跟向前跨一小步）。', opts:['Stage 3','Stage 4','Stage 5','Stage 6'], ans:2, fc:'答對！站姿膝後彎超過 90° 和站姿踝背屈，是下肢 Stage 5 的特徵動作。', fw:'答案是 Stage 5。下肢 Stage 5：站姿膝後彎超過 90°（髖需接近伸直），站姿踝背屈（膝伸直腳跟向前跨一小步）。' },
+  ],
+  mas: [
+    { cat:'MAS 肌張力評分', text:'Modified Ashworth Scale 評分', scenario:'治療師在一秒內對病患患側手肘做 quick stretch 至 full range。整個過程中均可感覺有阻力，但仍相對容易移動完整 ROM，不是很難推。', opts:['MAS 1','MAS 1+','MAS 2','MAS 3'], ans:2, fc:'答對！整個 ROM 過程中都有阻力但仍容易移動，是 MAS 2 的特徵。', fw:'答案是 MAS 2。MAS 2：整個 ROM 過程都有阻力，但仍很容易移動。MAS 3 是阻力非常強，不容易移動。' },
+    { cat:'MAS 肌張力評分', text:'Modified Ashworth Scale 評分', scenario:'治療師快速牽拉病患患側腕關節至背屈。在動作進行到前半段（前 1/2）時即感受到明顯阻力，但後半段阻力減少。', opts:['MAS 0','MAS 1','MAS 1+','MAS 2'], ans:2, fc:'答對！阻力出現在前 1/2，是 MAS 1+ 的特徵。MAS 1 是只在最後才有一點阻力。', fw:'答案是 MAS 1+。MAS 1+ 的特徵：阻力在做到前 1/2 內就發生。MAS 1 是阻力只在最後一點發生，兩者位置不同。' },
+    { cat:'MAS 肌張力評分', text:'Modified Ashworth Scale 評分', scenario:'治療師嘗試牽拉病患患側膝關節，發現膝關節完全無法移動，肢體呈現固定的屈曲狀態，無論如何施力都無法改變角度。', opts:['MAS 2','MAS 3','MAS 4','MAS 1+'], ans:2, fc:'答對！肢體呈現固定的伸直或屈曲僵直狀態，是 MAS 4 的特徵。', fw:'答案是 MAS 4。MAS 4：患部肢體呈現伸直或屈曲的僵直狀態，完全無法移動。MAS 3 是阻力很強但仍可移動。' },
+    { cat:'MAS 肌張力評分', text:'Modified Ashworth Scale 評分', scenario:'治療師觸摸並評估病患患側手腕張力。病患完全放鬆，快速牽拉時未感受到任何阻力，肌肉呈現鬆弛狀態（flaccid）。', opts:['MAS 0','MAS 1','MAS 1+','MAS 2'], ans:0, fc:'答對！沒有任何阻力，肌肉呈 flaccid 或正常張力，是 MAS 0 的特徵。', fw:'答案是 MAS 0。MAS 0：肌肉張力沒有上升，呈 flaccid 或正常。這在腦傷急性期或 Brunnstrom Stage 1 的病患常見。' },
+  ]
+};
+
+let shuffled = [], qIdx = 0, score = 0, answered = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function startQuiz(type) {
+  const name = document.getElementById('studentName').value.trim();
+  if (!name) { alert('請先輸入您的姓名！'); return; }
+  studentName = name;
+  let pool = [];
+  if (type === 'all') pool = [...allQuestions.gcs, ...allQuestions.brunn, ...allQuestions.mas];
+  else if (type === 'gcs') pool = [...allQuestions.gcs];
+  else if (type === 'brunn') pool = [...allQuestions.brunn];
+  else if (type === 'mas') pool = [...allQuestions.mas];
+  shuffled = shuffle(pool);
+  qIdx = 0; score = 0;
+  document.getElementById('nameCard').style.display = 'none';
+  document.getElementById('quizCard').style.display = 'block';
+  document.getElementById('scoreScreen').style.display = 'none';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (qIdx >= shuffled.length) { showScore(); return; }
+  const q = shuffled[qIdx];
+  answered = false;
+  document.getElementById('qProgress').style.width = (qIdx/shuffled.length*100) + '%';
+  document.getElementById('qNum').textContent = '題目 '+(qIdx+1)+' / '+shuffled.length;
+  document.getElementById('qBadge').textContent = q.cat;
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('qScenario').textContent = q.scenario;
+  const grid = document.getElementById('qOptions');
+  grid.innerHTML = '';
+  q.opts.forEach((o,i) => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn';
+    b.innerHTML = '<div class="ol">'+o+'</div>';
+    b.onclick = () => selectAnswer(i, q);
+    grid.appendChild(b);
+  });
+  const fb = document.getElementById('qFeedback');
+  fb.style.display = 'none'; fb.className = 'feedback';
+  document.getElementById('qNextBtn').style.display = 'none';
+}
+
+function selectAnswer(chosen, q) {
+  if (answered) return;
+  answered = true;
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  const ok = chosen === q.ans;
+  if (ok) { score++; btns[chosen].className = 'opt-btn correct'; }
+  else { btns[chosen].className = 'opt-btn wrong'; btns[q.ans].className = 'opt-btn reveal'; }
+  const fb = document.getElementById('qFeedback');
+  fb.style.display = 'block';
+  fb.className = 'feedback '+(ok?'correct':'wrong');
+  document.getElementById('qFbTitle').textContent = ok ? '答對了！' : '答錯了';
+  document.getElementById('qFbBody').textContent = ok ? q.fc : q.fw;
+  const nb = document.getElementById('qNextBtn');
+  nb.style.display = 'block';
+  nb.textContent = qIdx < shuffled.length-1 ? '下一題' : '查看成績';
+}
+
+document.getElementById('qNextBtn').onclick = () => { qIdx++; renderQuestion(); };
+
+function showScore() {
+  document.getElementById('quizCard').style.display = 'none';
+  const ss = document.getElementById('scoreScreen');
+  ss.style.display = 'block';
+  const pct = Math.round(score/shuffled.length*100);
+  document.getElementById('scoreBig').textContent = pct+'%';
+  document.getElementById('scoreLabel').textContent = pct===100?'全部答對，臨床判斷力優秀！':pct>=80?'表現很好，再複習幾個情境吧。':pct>=60?'有進步空間，建議重複練習。':'建議重新複習評分標準後再練習。';
+  document.getElementById('scoreNameLabel').textContent = studentName + ' 的成績';
+  document.getElementById('scCorrect').textContent = score;
+  document.getElementById('scWrong').textContent = shuffled.length-score;
+  document.getElementById('scTotal').textContent = shuffled.length;
+  submitScore(studentName, pct, score, shuffled.length-score, shuffled.length);
+}
+
+function submitScore(name, pct, correct, wrong, total) {
+  const status = document.getElementById('submitStatus');
+  status.textContent = '成績送出中...';
+  fetch(SCRIPT_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({name, score:pct, correct, wrong, total})
+  }).then(() => {
+    status.textContent = '✓ 成績已送出給老師';
+    status.style.color = 'var(--green)';
+  }).catch(() => {
+    status.textContent = '⚠ 成績送出失敗，請告知老師';
+    status.style.color = 'var(--red)';
+  });
+}
+
+function restartQuiz() {
+  qIdx=0; score=0; studentName='';
+  document.getElementById('studentName').value='';
+  document.getElementById('nameCard').style.display='block';
+  document.getElementById('quizCard').style.display='none';
+  document.getElementById('scoreScreen').style.display='none';
+}
+</script>
+</body>
+</html>
